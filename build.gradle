@@ -1,0 +1,54 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+mainClassName = 'org.datagaiden.replr.server.ReplR'
+sourceCompatibility = 1.5
+version = '1.0'
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Quickstart', 
+        		   'Implementation-Version': version, 
+        		   'Main-Class': 'org.datagaiden.replr.server.ReplR'
+		}
+}
+
+task fatJar(type: Jar) {
+	manifest {
+        attributes 'Implementation-Title': 'Gradle Jar File Example',  
+        	'Implementation-Version': version,
+        	'Main-Class': 'org.datagaiden.replr.server.ReplR'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+    compile("org.zeromq:jeromq:0.3.4")
+    compile("log4j:log4j:1.2.17")
+    compile files('lib/JRI.jar')
+    compile files('lib/JRIEngine.jar')
+    compile files('lib/REngine.jar')
+    runtime files('lib/JRI.jar')
+    runtime files('lib/JRIEngine.jar')
+    runtime files('lib/REngine.jar')
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+
+test {
+    systemProperties 'property': 'value'
+}
+
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'repos'
+       }
+    }
+}
